@@ -20,3 +20,10 @@ async def back_to_start_handler(callback: CallbackQuery, callback_data: Professi
         f"Информация о профессии №{profession_id}",
         reply_markup=info_about_profession()
     )
+
+@professions_router.callback_query(F.data == "select_prof_back")
+async def back_to_start_handler(callback: CallbackQuery):
+    await callback.message.edit_text(
+        "Выбери профессию",
+        reply_markup=await select_profession_keyboard()
+    )

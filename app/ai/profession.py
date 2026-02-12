@@ -1,18 +1,12 @@
-from sqlalchemy import BigInteger
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.ai.client import client
+from app.ai.client import model
 from app.db.crud.professions_crud import get_profession_name
 
-from openai import RateLimitError
-
-async def response_by_profession_subjects(session: AsyncSession, tg_id: BigInteger):
+async def response_by_profession_subjects(session: AsyncSession, tg_id: int):
     try:
-        response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=[{
-                "role": "user",
-                "content": f'''Выдать список школьных предметов, нужных для сдачи ЕГЭ в 2025/2026 г. для поступления на профессию "{await get_profession_name(session, tg_id)}" в г. Москва. Оформить в деловом стиле. Напиши без лишних слов. Например: В соответствии с требованиями для поступления на медицинские специальности вузов Москвы в 2025/2026 учебном году, представлен список обязательных и рекомендованных предметов для сдачи ЕГЭ:
+        profession = await get_profession_name(session, tg_id)
+
+        prompt = f'''Выдать список школьных предметов, нужных для сдачи ЕГЭ в 2025/2026 г. для поступления на профессию "{profession}" в г. Москва. Оформить в деловом стиле. Напиши без лишних слов. Например: В соответствии с требованиями для поступления на медицинские специальности вузов Москвы в 2025/2026 учебном году, представлен список обязательных и рекомендованных предметов для сдачи ЕГЭ:
     
     1. **Русский язык**  
        - Обязательный предмет для всех абитуриентов.
@@ -32,21 +26,25 @@ async def response_by_profession_subjects(session: AsyncSession, tg_id: BigInteg
        - Полезный предмет для общего понимания естественных наук.
     
     При подготовке к ЕГЭ абитуриентам рекомендуется ознакомиться с требованиями выбранных вузов, так как они могут варьироваться.'''
-            }]
-        )
-        return response.choices[0].message.content
-    except RateLimitError:
-        return "Извините, лимит запросов исчерпан. Попробуйте позже."
+
+        response = await model.generate_content(prompt)
+        return response.text
+
+    except Exception as e:
+        print("Gemini error:", e)
+        return "Извините, сервис временно недоступен. Попробуйте позже."
+
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.ai.client import model
+from app.db.crud.professions_crud import get_profession_name
 
 
-async def response_by_info_about_profession(session: AsyncSession, tg_id: BigInteger):
+async def response_by_info_about_profession(session: AsyncSession, tg_id: int):
     try:
+        profession = await get_profession_name(session, tg_id)
 
-        response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=[{
-                "role": "user",
-                "content": f'''Выдать информацию по профессии: "{await get_profession_name(session, tg_id)}" в г. Москва. Оформить в деловом стиле. Пример: **Информация о профессии: Инженер в г. Москва**
+
+        prompt = f'''Выдать информацию по профессии: "{profession}" в г. Москва. Оформить в деловом стиле. Пример: **Информация о профессии: Инженер в г. Москва**
     
     **1. Общее описание профессии:**
     Инженер — это специалист, занимающийся проектированием, разработкой, внедрением и эксплуатацией техники, технологий и систем в различных отраслях. В Москве, как одном из крупнейших центров инженерной отрасли России, данной профессии уделяется значительное внимание.
@@ -78,8 +76,10 @@ async def response_by_info_about_profession(session: AsyncSession, tg_id: BigInt
     
     **7. Заключение:**
     Профессия инженера в Москве является высоко востребованной и предлагающей разнообразные возможности для карьерного роста. Специалистам этой области открыты перспективы работы в современных компаниях, участие в инновационных проектах и возможность внести значимый вклад в развитие технологий и социальной инфраструктуры.'''
-            }]
-        )
-        return response.choices[0].message.content
-    except RateLimitError:
-        return "Извините, лимит запросов исчерпан. Попробуйте позже."
+
+        response = await model.generate_content(prompt)
+        return response.text
+
+    except Exception as e:
+        print("Gemini error:", e)
+        return "Извините, сервис временно недоступен. Попробуйте позже."
