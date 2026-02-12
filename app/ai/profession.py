@@ -1,4 +1,5 @@
-from app.ai.client import model
+from app.ai.client import client
+model = "gemini-1.5-flash"
 
 async def response_by_profession_subjects(profession_name: str):
     try:
@@ -23,8 +24,13 @@ async def response_by_profession_subjects(profession_name: str):
     
     При подготовке к ЕГЭ абитуриентам рекомендуется ознакомиться с требованиями выбранных вузов, так как они могут варьироваться.'''
 
-        response = await model.generate_content(prompt)
-        return response.text
+        response = client.generate_content(
+            model=model,
+            prompt=prompt,
+            temperature=0.7,
+            max_output_tokens=400,
+        )
+        return response.candidates[0].output_text
 
     except Exception as e:
         print("Gemini error:", e)
@@ -70,8 +76,13 @@ async def response_by_info_about_profession(profession_name: str):
     **7. Заключение:**
     Профессия инженера в Москве является высоко востребованной и предлагающей разнообразные возможности для карьерного роста. Специалистам этой области открыты перспективы работы в современных компаниях, участие в инновационных проектах и возможность внести значимый вклад в развитие технологий и социальной инфраструктуры.'''
 
-        response = await model.generate_content(prompt)
-        return response.text
+        response = client.generate_content(
+            model=model,
+            prompt=prompt,
+            temperature=0.7,
+            max_output_tokens=400,
+        )
+        return response.candidates[0].output_text
 
     except Exception as e:
         print("Gemini error:", e)

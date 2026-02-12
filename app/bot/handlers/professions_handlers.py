@@ -1,3 +1,4 @@
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from aiogram import Router, F
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,19 +15,19 @@ async def select_profession_handler(message: Message):
     await message.answer("Выбери профессию", reply_markup=await select_profession_keyboard())
 
 @professions_router.callback_query(ProfessionCallback.filter())
-async def back_to_start_handler(callback: CallbackQuery, callback_data: ProfessionCallback):
+async def start_handler(callback: CallbackQuery, callback_data: ProfessionCallback, state: FSMContext):
     profession_name = callback_data.profession_name
 
-    text = await response_by_info_about_profession(profession_name)
+    await state.update_data(profession=profession_name)
 
-    await callback.message.edit_text(
-        text,
+    await callback.message.answer(
+        f"Профессия: {profession_name}",
         reply_markup=info_about_profession()
     )
-
-@professions_router.callback_query(F.data == "select_prof_back")
-async def back_to_start_handler(callback: CallbackQuery):
-    await callback.message.edit_text(
-        "Выбери профессию",
-        reply_markup=await select_profession_keyboard()
-    )
+#
+# @professions_router.callback_query(F.data == "select_prof_back")
+# async def back_to_start_handler(callback: CallbackQuery):
+#     await callback.message.edit_text(
+#         "Выбери профессию",
+#         reply_markup=await select_profession_keyboard()
+#     )
