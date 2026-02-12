@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: school_bot_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: mikhail
+      POSTGRES_PASSWORD: qwerty123
+      POSTGRES_DB: school_bot_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mikhail -d school_bot_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  bot:
+    build: .
+    container_name: school_bot
+    env_file: .env
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      USER_DB: mikhail
+      PASSWORD_DB: qwerty123
+      NAME_DB: school_bot_db
+      HOST_DB: db
+      PORT_DB: 5432
+    command: >
+      sh -c "alembic upgrade head && sleep 3 && python app/main.py"
+
+volumes:
+  postgres_data:
