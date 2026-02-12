@@ -1,12 +1,8 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from app.ai.client import model
-from app.db.crud.professions_crud import get_profession_name
 
-async def response_by_profession_subjects(session: AsyncSession, tg_id: int):
+async def response_by_profession_subjects(profession_name: str):
     try:
-        profession = await get_profession_name(session, tg_id)
-
-        prompt = f'''Выдать список школьных предметов, нужных для сдачи ЕГЭ в 2025/2026 г. для поступления на профессию "{profession}" в г. Москва. Оформить в деловом стиле. Напиши без лишних слов. Например: В соответствии с требованиями для поступления на медицинские специальности вузов Москвы в 2025/2026 учебном году, представлен список обязательных и рекомендованных предметов для сдачи ЕГЭ:
+        prompt = f'''Выдать список школьных предметов, нужных для сдачи ЕГЭ в 2025/2026 г. для поступления на профессию "{profession_name}" в г. Москва. Оформить в деловом стиле. Напиши без лишних слов. Например: В соответствии с требованиями для поступления на медицинские специальности вузов Москвы в 2025/2026 учебном году, представлен список обязательных и рекомендованных предметов для сдачи ЕГЭ:
     
     1. **Русский язык**  
        - Обязательный предмет для всех абитуриентов.
@@ -34,17 +30,14 @@ async def response_by_profession_subjects(session: AsyncSession, tg_id: int):
         print("Gemini error:", e)
         return "Извините, сервис временно недоступен. Попробуйте позже."
 
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.ai.client import model
-from app.db.crud.professions_crud import get_profession_name
 
 
-async def response_by_info_about_profession(session: AsyncSession, tg_id: int):
+
+async def response_by_info_about_profession(profession_name: str):
     try:
-        profession = await get_profession_name(session, tg_id)
 
 
-        prompt = f'''Выдать информацию по профессии: "{profession}" в г. Москва. Оформить в деловом стиле. Пример: **Информация о профессии: Инженер в г. Москва**
+        prompt = f'''Выдать информацию по профессии: "{profession_name}" в г. Москва. Оформить в деловом стиле. Пример: **Информация о профессии: Инженер в г. Москва***
     
     **1. Общее описание профессии:**
     Инженер — это специалист, занимающийся проектированием, разработкой, внедрением и эксплуатацией техники, технологий и систем в различных отраслях. В Москве, как одном из крупнейших центров инженерной отрасли России, данной профессии уделяется значительное внимание.

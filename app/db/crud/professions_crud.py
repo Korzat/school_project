@@ -37,19 +37,5 @@ async def get_all_professions(session: AsyncSession) -> list:
         print(f"Ошибка при получении профессий: {e}")
         return []
 
-# async def get_profession_name(session: AsyncSession, tg_id: int):
-#     try:
-#         stmt = (
-#             select(Profession.profession_name)
-#             .where(User.tg_id == tg_id)
-#         )
-#
-#         result = await session.execute(stmt)
-#         return result.scalar_one_or_none()
-#
-#     except Exception as e:
-#         print("DB error:", e)
-#         return None
-
 
 

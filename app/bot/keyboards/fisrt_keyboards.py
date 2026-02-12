@@ -22,7 +22,7 @@ async def select_profession_keyboard():
 
         btn_text = profession.profession_name if profession.profession_name else f"Профессия {profession.id}"
 
-        callback_data = ProfessionCallback(id=profession.id)
+        callback_data = ProfessionCallback(profession_name=profession.profession_name)
         builder.button(
             text=btn_text,
             callback_data=callback_data.pack()
