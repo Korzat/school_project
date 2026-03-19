@@ -18,15 +18,10 @@ async def select_profession_keyboard():
         all_professions = await get_all_professions(session)
 
     for profession in all_professions:
-        print(f"DEBUG: ID={profession.id}, Name={getattr(profession, 'profession_name', 'MISSING ATTR')}")
-
         btn_text = profession.profession_name if profession.profession_name else f"Профессия {profession.id}"
 
         callback_data = ProfessionCallback(profession_name=profession.profession_name)
-        builder.button(
-            text=btn_text,
-            callback_data=callback_data.pack()
-        )
+        builder.button(text=btn_text, callback_data=callback_data.pack())
 
     builder.adjust(1)
     return builder.as_markup()

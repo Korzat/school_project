@@ -1,7 +1,7 @@
 
 
 from aiogram.types import InlineKeyboardMarkup
-from aiogram.utils.keyboard import  InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
 def info_about_profession() -> InlineKeyboardMarkup:

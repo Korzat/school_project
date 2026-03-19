@@ -1,7 +1,5 @@
 from sqlalchemy import BigInteger, update, select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.db.models import Profession
 from app.db.models.users import User
 
 
@@ -10,7 +8,7 @@ async def set_user(tg_id: BigInteger, session: AsyncSession) -> None:
         user = await session.get(User, tg_id)
 
         if not user:
-            new_user = User(tg_id=tg_id, points=0)
+            new_user = User(tg_id=tg_id, points=0, ai_questions_count=0)
             session.add(new_user)
             await session.commit()
             print(f"Пользователь {tg_id} успешно создан.")

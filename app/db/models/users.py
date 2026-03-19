@@ -7,4 +7,5 @@ class User(Base):
     __tablename__ = "users"
     tg_id = Column(BigInteger, primary_key=True)
     points = Column(Integer, default=0)
+    ai_questions_count = Column(Integer, default=0)
 
